@@ -100,8 +100,15 @@ public final class StateMachineDefinition<T> {
     <S extends Event<? super T>> StateMachineDefinition<T> addInitialTransition(State<T, S> other) {
         Transition<T, EventVoid, S> transition = new Transition<T, EventVoid, S>(initialState, other);
         System.out.println("adding " + transition);
+        for (Transition<T, ?, ?> t : transitions) {
+            if (t.from() == initialState && t.to() == other) {
+                throw new IllegalArgumentException(
+                        "the transition already exists: " + initialState.name() + " -> " + other.name());
+            }
+        }
         transitions.add(transition);
         states.add(initialState);
+        states.add(other);
         return this;
     }
 
